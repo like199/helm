@@ -1,0 +1,6 @@
+dependencies:
+- name: redis
+  repository: https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts
+  version: 1.1.15
+digest: sha256:d2deacc78b83281df2d33a5315fd1c9bd56368091bad78ad22a5ac1e446fb1a5
+generated: "2019-08-23T11:24:16.57517174+08:00"
