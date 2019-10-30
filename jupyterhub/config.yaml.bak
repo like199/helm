@@ -1,0 +1,57 @@
+singleuser:
+  defaultUrl: "/lab"
+  storage:
+    dynamic:
+      storageClass: harbornfs-nfs
+    capacity: 2Gi
+  image:
+    name: jupyter/minimal-notebook
+    tag: 2343e33dec46
+  profileList:
+    - display_name: "Minimal environment"
+      description: "To avoid too much bells and whistles: Python."
+      default: true
+    - display_name: "tensorflow environment"
+      description: "tensorflow:1.13.0: Python,  and Julia."
+      kubespawner_override:
+        image: core.harbor.domain/jupyter/tensorflow:1.13.0  
+    - display_name: "pytorch enviroment "
+      description: "pytorch: python , and Julia"
+      kubespawner_override:
+        image: core.harbor.domain/jupyter/pytorch
+    - display_name: "tensorflow GPU environment"
+      description: "tensorflow:1.13.0: Python,  and Julia. with GPU"
+      kubespawner_override:
+        image: core.harbor.domain/jupyter/tensorflow:1.13.0  
+        extra_resource_limits:
+          nvidia.com/gpu: "1"
+    - display_name: "pytorch GPU enviroment "
+      description: "pytorch: python , and Julia with GPU"
+      kubespawner_override:
+        image: core.harbor.domain/jupyter/pytorch
+        extra_resource_limits:
+          nvidia.com/gpu: "1"
+    - display_name: "Learning Data Science"
+      description: "Datascience Environment with Sample Notebooks"
+      kubespawner_override:
+        image: jupyter/datascience-notebook:2343e33dec46
+        lifecycle_hooks:
+          postStart:
+            exec:
+              command:
+                - "sh"
+                - "-c"
+                - >
+                  gitpuller https://github.com/data-8/materials-fa17 master materials-fa;
+auth:
+  type: github
+  github:
+    clientId: "8b7ef7aea45fae209b87"
+    clientSecret: "ab605f9286f9c3156fe8fd42c3082a7e8961e5fe"
+    callbackUrl: "http://myjupyter.com:30675/hub/oauth_callback"
+proxy:
+  secretToken: "635fb364610cbc693670991aceecae85a88ee4679b2ea5ab20f01b62e3373bdb"
+hub:
+  extraConfig:
+    jupyterlab: |
+      c.Spawner.cmd = ['jupyter-labhub']

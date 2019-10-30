@@ -1,0 +1,41 @@
+singleuser:
+  defaultUrl: "/lab"
+  storage:
+    dynamic:
+      storageClass: harbornfs-nfs
+    capacity: 2Gi
+  image:
+    name: jupyter/minimal-notebook
+    tag: 2343e33dec46
+  profileList:
+    - display_name: "Minimal environment"
+      description: "To avoid too much bells and whistles: Python."
+      default: true
+    - display_name: "tensorflow environment"
+      description: "tensorflow:1.13.0: Python,  and Julia."
+      kubespawner_override:
+        image: core.harbor.domain/jupyter/tensorflow:1.13.0  
+    - display_name: "tensorflow GPU environment"
+      description: "tensorflow:1.13.0: Python,  and Julia. with GPU"
+      kubespawner_override:
+        image: core.harbor.domain/jupyter/tensorflow:1.13.0  
+        extra_resource_limits:
+          nvidia.com/gpu: "1"
+    - display_name: "Learning Data Science"
+      description: "Datascience Environment with Sample Notebooks"
+      kubespawner_override:
+        image: jupyter/datascience-notebook:2343e33dec46
+        lifecycle_hooks:
+          postStart:
+            exec:
+              command:
+                - "sh"
+                - "-c"
+                - >
+                  gitpuller https://github.com/data-8/materials-fa17 master materials-fa;
+proxy:
+  secretToken: "4e41977776bf815d712b527c94482b0397e80a190c73786f2c73e63bb929c7b3"
+hub:
+  extraConfig:
+    jupyterlab: |
+      c.Spawner.cmd = ['jupyter-labhub']

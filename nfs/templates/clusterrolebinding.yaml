@@ -1,0 +1,13 @@
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{.Release.Name}}-client-provisioner
+subjects:
+  - kind: ServiceAccount
+    name: {{.Release.Name}}-client-provisioner
+    namespace: default
+roleRef:
+  kind: ClusterRole
+  name: {{.Release.Name}}-provisioner-runner
+  apiGroup: rbac.authorization.k8s.io
+

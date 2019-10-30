@@ -1,0 +1,32 @@
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: {{.Release.Name}}-provisioner
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: {{.Release.Name}}-provisioner
+    spec:
+      serviceAccount: {{.Release.Name}}-client-provisioner  #这个要与刚才创建的serviceaccount 的名字一致
+      containers:
+        - name: {{.Release.Name}}-provisioner
+          image: registry.cn-hangzhou.aliyuncs.com/open-ali/nfs-client-provisioner
+          volumeMounts:
+            - name: {{.Release.Name}}-client-root
+              mountPath: /persistentvolumes
+          env:
+            - name: PROVISIONER_NAME
+              value: {{.Release.Name}}/nfs #这里名字自定义，要记住storageclass 后面要用到
+            - name: NFS_SERVER
+              value: {{ .Values.nfsServer }}
+            - name: NFS_PATH
+              value: {{ .Values.nfsPath }} 
+      volumes:
+        - name: {{.Release.Name}}-client-root
+          nfs:
+            server: {{.Values.nfsServer}}
+            path: {{.Values.nfsPath}}
